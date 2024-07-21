@@ -1,7 +1,6 @@
-import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CriarJogadorDTO } from './dtos/criar-jogador.dto';
 import { Jogador } from './interfaces/jogador.interface';
-import { v4 as uuidv4 } from 'uuid';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
@@ -10,25 +9,25 @@ export class JogadoresService {
 
     constructor(@InjectModel('Jogadores') private readonly jogadorModel: Model<Jogador>) { }
 
-    async criarAtualizarJogador(criarJogadorDto: CriarJogadorDTO): Promise<Jogador> {
-        const { email } = criarJogadorDto;
+    async atualizarJogador(_id: string, jogador: CriarJogadorDTO): Promise<Jogador> {
+        const jogadorEncontrado = await this.jogadorModel.findOne({ _id }).exec();
+        if (!jogadorEncontrado) throw new NotFoundException("Jogador com _id " + _id + " não encontrado")
+        await this.jogadorModel.updateOne({ _id: _id }, jogador);
+        return jogadorEncontrado;
 
-        const jogadorEncontrado = await this.jogadorModel.findOne({ email }).exec();
-
-        if (jogadorEncontrado) {
-            return this.atualizar(jogadorEncontrado, criarJogadorDto)
-        }
-        return this.criar(criarJogadorDto);
     }
 
-    private async atualizar(jogadorEncontrado: Jogador, criarJogadorDto: CriarJogadorDTO): Promise<Jogador> {
-        await this.jogadorModel.updateOne({ email: jogadorEncontrado.email }, criarJogadorDto);
-        return await this.jogadorModel.findOne({ email: jogadorEncontrado.email }).exec();
-    }
+    async criarJogador(jogador: CriarJogadorDTO): Promise<Jogador> {
+        const {email, telefone} = jogador;
 
-    private async criar(criarJogadorDto: CriarJogadorDTO): Promise<Jogador> {
+        const emailExiste = await this.jogadorModel.findOne({email}).exec();
 
-        const jogadorCriador = new this.jogadorModel(criarJogadorDto);
+        if(emailExiste) throw new BadRequestException("Email já cadastrado anteriomente");
+
+        const telefoneExiste = await this.jogadorModel.findOne({telefone}).exec();
+        if(telefoneExiste) throw new BadRequestException("Telefone já cadastrado anteriomente");
+
+        const jogadorCriador = new this.jogadorModel(jogador);
         return await jogadorCriador.save();
     }
 
@@ -43,9 +42,17 @@ export class JogadoresService {
 
         return jogador
     }
+    async buscarJogadorPeloId(_id: string): Promise<Jogador> {
+        const jogador = await this.jogadorModel.findById(_id);
 
-    async deletarJogadorPorEmail(email: string): Promise<any> {
-        const deleteObj = await this.jogadorModel.deleteOne({ email });
+        if (!jogador) throw new NotFoundException(`Jogador com o id ${_id} não foi encontrado`)
+
+        return jogador;
+
+    }
+
+    async deletarJogadorPorid(_id: string): Promise<any> {
+        const deleteObj = await this.jogadorModel.deleteOne({ _id });
         if (deleteObj.deletedCount < 1) throw new BadRequestException('Erro ao excluir o registro')
         return {
             'message': 'Registro excluido com sucesso',
