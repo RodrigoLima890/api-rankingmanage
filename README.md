@@ -23,8 +23,13 @@
   [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
 ## Description
+### Dominio
+Essa é uma `api` de uma aplicação para jogadores amadores de `tênis`. Esses jogadores fazem parte de um `ranking` que será atualizado de acordo com a realização de partidas. Os jogadores poderam fazer desafios para outros.
+Atualmente o ranking é atualizado de forma manual essa API vai fazer com que o processo e o gerenciamento das partidas sejam feitas de forma automatica.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+### Tecnologias usadas(até o momento)
+- Nest JS
+- Mongo DB
 
 ## Installation
 
@@ -57,16 +62,24 @@ $ npm run test:e2e
 # test coverage
 $ npm run test:cov
 ```
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+## Documentação de temos tecnicos sobre o NEST JS
+### Aqui vou fazer explicar alguns conceitos do NEST JS
+#### Diferença entre forFeature e forRoot
+<p>No model, nas importações é possivel especificar o escopo dessa importação</p>
+  <ul>
+  <li>ForRoot(forRoot)</li>
+    <p>Uso: Configuração global.</p>
+    <p>Contexto: É utilizado para configurar e inicializar um módulo com escopo global na aplicação. Normalmente, é chamado no módulo raiz da aplicação (geralmente AppModule).</p>
+    <p>Propósito: Configura serviços ou conexões que devem ser únicos e compartilhados por toda a aplicação. Como, por exemplo, uma conexão com banco de dados.</p>
+  <li>ForFeature(forFeature)</li>
+    <p>Uso: Configuração local (por módulo).</p>
+    <p>É utilizado para registrar entidades ou recursos específicos dentro de um módulo específico. Não é singleton global, mas está disponível apenas para o módulo onde é importado.</p>
+    <p>Usado para registrar entidades específicas do ORM ou recursos dentro de um módulo específico. Isso permite que cada módulo gerencie suas próprias dependências de forma isolada.</p>
+    <li>
+      forRootAsync: Usado para fornecer configuração assíncrona. Permite que você injete dependências ou carregue a configuração de maneira assíncrona.
+    </li>
+    <li>forFeatureAsync: Similar ao forRootAsync, mas para configuração local por módulo.</li>
+  </ul> 
 
 ## License
 
