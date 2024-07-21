@@ -1,5 +1,5 @@
-export interface Jogador {
-    readonly _id: string;
+import { Document } from "mongodb";
+export interface Jogador extends Document{
     readonly telefone:string;
     readonly email: string;
     nome:string;

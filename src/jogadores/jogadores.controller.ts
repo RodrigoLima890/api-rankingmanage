@@ -11,21 +11,21 @@ export class JogadoresController {
     @Post()
     async criarAtualizarJogador(
         @Body() jogadorDto:CriarJogadorDTO
-    ){
-        await this.jogadoresService.criarAtualizarJogador(jogadorDto)
+    ):Promise<Jogador>{
+        return await this.jogadoresService.criarAtualizarJogador(jogadorDto)
     }
 
     @Get('/buscarTodos')
-    buscarJogadores(@Query('email') email:string):Jogador[] | Jogador{
-        if(email){
-            return this.jogadoresService.buscarJogadorPorEmail(email);
-        }else{
-            return this.jogadoresService.buscarTodosJogadores();
-        }
+    async buscarJogadores(@Query('email') email:string):Promise<Jogador[] | Jogador>{
+        
+        if(email) return await this.jogadoresService.buscarJogadorPorEmail(email);
+        
+        return await this.jogadoresService.buscarTodosJogadores();
+        
     }
 
     @Delete()
-    deletarJogadorPorEmail(@Query('email') email:string):void{
-        this.jogadoresService.deletarJogadorPorEmail(email);
+    async deletarJogadorPorEmail(@Query('email') email:string):Promise<any>{
+        return await this.jogadoresService.deletarJogadorPorEmail(email);
     }
 }
