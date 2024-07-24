@@ -9,23 +9,30 @@ export class JogadoresService {
 
     constructor(@InjectModel('Jogadores') private readonly jogadorModel: Model<Jogador>) { }
 
-    async atualizarJogador(_id: string, jogador: CriarJogadorDTO): Promise<Jogador> {
+    async atualizarJogador(_id: string, jogador: CriarJogadorDTO): Promise<Object> {
         const jogadorEncontrado = await this.jogadorModel.findOne({ _id }).exec();
+
         if (!jogadorEncontrado) throw new NotFoundException("Jogador com _id " + _id + " não encontrado")
-        await this.jogadorModel.updateOne({ _id: _id }, jogador);
-        return jogadorEncontrado;
+
+        const jogadorModificado = await this.jogadorModel.updateOne({ _id: _id }, jogador);
+
+        if (!jogadorModificado.matchedCount) throw new BadRequestException("Erro ao tentar modificar o jogador");
+
+        return {
+            mensagem: "Jogador alterado com sucesso"
+        };
 
     }
 
     async criarJogador(jogador: CriarJogadorDTO): Promise<Jogador> {
-        const {email, telefone} = jogador;
+        const { email, telefone } = jogador;
 
-        const emailExiste = await this.jogadorModel.findOne({email}).exec();
+        const emailExiste = await this.jogadorModel.findOne({ email }).exec();
 
-        if(emailExiste) throw new BadRequestException("Email já cadastrado anteriomente");
+        if (emailExiste) throw new BadRequestException("Email já cadastrado anteriomente");
 
-        const telefoneExiste = await this.jogadorModel.findOne({telefone}).exec();
-        if(telefoneExiste) throw new BadRequestException("Telefone já cadastrado anteriomente");
+        const telefoneExiste = await this.jogadorModel.findOne({ telefone }).exec();
+        if (telefoneExiste) throw new BadRequestException("Telefone já cadastrado anteriomente");
 
         const jogadorCriador = new this.jogadorModel(jogador);
         return await jogadorCriador.save();
@@ -51,12 +58,11 @@ export class JogadoresService {
 
     }
 
-    async deletarJogadorPorid(_id: string): Promise<any> {
+    async deletarJogadorPorid(_id: string): Promise<Object> {
         const deleteObj = await this.jogadorModel.deleteOne({ _id });
         if (deleteObj.deletedCount < 1) throw new BadRequestException('Erro ao excluir o registro')
         return {
-            'message': 'Registro excluido com sucesso',
-            ...deleteObj
+            'message': 'Jogador excluido com sucesso',
         }
     }
 
