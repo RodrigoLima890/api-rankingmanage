@@ -9,5 +9,5 @@ export class AtualizaCategoriaDto{
 
     @IsArray()
     @ArrayMinSize(1)
-    evento:Evento;
+    eventos:Array<Evento>;
 }
