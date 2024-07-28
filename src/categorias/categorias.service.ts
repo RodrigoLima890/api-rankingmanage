@@ -27,8 +27,8 @@ export class CategoriasService {
         return await this.categoriaModel.find().populate('jogadores').exec();
     }
 
-    async buscarCategoriaPorId(_id:string):Promise<Categoria>{
-        const categoriaEncontrada = await this.categoriaModel.findById(_id).exec();
+    async buscarCategoria(categoria:string):Promise<Categoria>{
+        const categoriaEncontrada = await this.categoriaModel.findOne({categoria:categoria}).exec();
 
         if(!categoriaEncontrada) throw new NotFoundException("Categoria não encontrada");
 

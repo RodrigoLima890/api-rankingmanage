@@ -22,9 +22,9 @@ export class CategoriasController {
         return this.categoriaService.buscarTodasCategorias();
     }
 
-    @Get('/:_id')
-    async buscarCategoriaPorId(@Param('_id') _id:string):Promise<Categoria>{
-        return this.categoriaService.buscarCategoriaPorId(_id)
+    @Get('/:categoria')
+    async buscarCategoria(@Param('categoria') categoria:string):Promise<Categoria>{
+        return this.categoriaService.buscarCategoria(categoria)
     }
 
     @Delete('/:_id')
