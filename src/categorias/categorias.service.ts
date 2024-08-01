@@ -87,4 +87,12 @@ export class CategoriasService {
             'message':`Jogador(a) ${jogadorEncontrado.nome} relacionado(a) a categoria ${categoria} com sucesso`
         };
     }
+
+    async buscarCategoriaJogador(idJogador:string){
+        const categorias = await this.categoriaModel.find().exec()
+        
+        const jogadores = categorias.map(categoria => categoria.jogadores)
+
+        // jogadores.filter(jogador=> jogador == idJogador);
+    }
 }
