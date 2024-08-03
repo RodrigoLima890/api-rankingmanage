@@ -11,10 +11,9 @@ import { StatusDesafio } from './enums/status-desafio.enum';
 export class DesafiosService {
 
     constructor(
-        @InjectModel('desafios') private readonly desafioModel:Model<Desafios>,
+        @InjectModel('Desafios') private readonly desafioModel:Model<Desafios>,
         private readonly categoriaService:CategoriasService,
         private readonly jogadoresService:JogadoresService
-
     ){
     }
 

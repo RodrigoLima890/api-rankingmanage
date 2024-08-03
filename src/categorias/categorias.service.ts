@@ -88,11 +88,12 @@ export class CategoriasService {
         };
     }
 
-    async buscarCategoriaJogador(idJogador:string){
-        const categorias = await this.categoriaModel.find().exec()
-        
-        const jogadores = categorias.map(categoria => categoria.jogadores)
+    async buscarCategoriaJogador(idJogador:any):Promise<Categoria>{
 
-        // jogadores.filter(jogador=> jogador == idJogador);
+        const jogador = await this.jogadorModel.findById(idJogador).exec();
+
+        if(!jogador) throw new NotFoundException("Jogador "+idJogador+" não encontrado");
+
+        return await this.categoriaModel.findOne().where('jogadores').in(idJogador).exec();
     }
 }

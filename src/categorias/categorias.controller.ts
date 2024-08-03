@@ -43,4 +43,9 @@ export class CategoriasController {
         return await this.categoriaService.atribuiCategoriaJogador(param)
     }
 
+    @Get('buscarCategoriaJogador/:jogadorId')
+    async buscarCategoriaJogador(@Param('jogadorId') jogadorId:string):Promise<Categoria>{
+        return this.categoriaService.buscarCategoriaJogador(jogadorId)
+    }
+
 }

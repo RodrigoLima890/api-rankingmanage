@@ -13,7 +13,7 @@ import { DesafiosModule } from './desafios/desafios.module';
     CategoriasModule,
     DesafiosModule
   ],
-  controllers: [DesafiosController],
+  controllers: [],
   providers: [],
 })
 export class AppModule {}

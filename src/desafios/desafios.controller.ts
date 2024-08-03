@@ -10,9 +10,9 @@ export class DesafiosController {
 
     }
 
-    @Post()
-    @UsePipes(ValidacaoParamPipe)
-    async criaDesafio(@Body() desafio:CriaDesafioDto){
-        await this.desafiosService.criaDesafio(desafio);
-    }
+    // @Post()
+    // @UsePipes(ValidacaoParamPipe)
+    // async criaDesafio(@Body() desafio:CriaDesafioDto){
+    //     await this.desafiosService.criaDesafio(desafio);
+    // }
 }
