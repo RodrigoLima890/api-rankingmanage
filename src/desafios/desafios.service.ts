@@ -1,4 +1,4 @@
-import { BadRequestException, Inject, Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { CriaDesafioDto } from './dtos/cria-desafio.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -6,6 +6,7 @@ import { Desafios } from './interfaces/desafios.interface';
 import { CategoriasService } from 'src/categorias/categorias.service';
 import { JogadoresService } from 'src/jogadores/jogadores.service';
 import { StatusDesafio } from './enums/status-desafio.enum';
+import { CacheService } from 'src/cache/cache.service';
 
 @Injectable()
 export class DesafiosService {
@@ -13,7 +14,8 @@ export class DesafiosService {
     constructor(
         @InjectModel('Desafios') private readonly desafioModel: Model<Desafios>,
         private readonly categoriaService: CategoriasService,
-        private readonly jogadoresService: JogadoresService
+        private readonly jogadoresService: JogadoresService,
+        private readonly cacheService:CacheService
     ) {
     }
 
@@ -53,4 +55,16 @@ export class DesafiosService {
         return await desafioCriado.save();
     }
 
+    async buscarTodosDesafios():Promise<Desafios[]>{
+        return await this.desafioModel.find().exec()
+    }
+
+    async buscarDesafiosPorSolicitante(solicitante:string):Promise<Desafios[]>{
+        return this.cacheService.getCache<Desafios[]>(`desafio_${solicitante}`, 
+            () =>
+            this.desafioModel.find({
+                solicitante:solicitante
+            }))
+    }
+    
 }
