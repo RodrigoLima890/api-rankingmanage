@@ -5,7 +5,7 @@ import { Resultado } from "../interfaces/desafios.interface";
 export class AtribuirDesafioPartidaDto{
     
     @IsNotEmpty()
-    def:Jogador
+    def:string
 
     @IsNotEmpty()
     resultado: Array<Resultado>

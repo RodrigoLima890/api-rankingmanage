@@ -6,9 +6,10 @@ import { DesafioSchema } from './interfaces/desafios.schema';
 import { CategoriasModule } from 'src/categorias/categorias.module';
 import { JogadoresModule } from 'src/jogadores/jogadores.module';
 import { CacheModule } from 'src/cache/cache.module';
+import { PartidaSchema } from './interfaces/partidas.schema';
 @Module({
   imports: [
-    MongooseModule.forFeature([{name:'Desafios',schema:DesafioSchema}]),
+    MongooseModule.forFeature([{name:'Desafios',schema:DesafioSchema},{name:'Partidas',schema:PartidaSchema}]),
     CategoriasModule,
     JogadoresModule,
     CacheModule
