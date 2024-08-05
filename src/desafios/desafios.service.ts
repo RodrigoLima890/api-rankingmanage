@@ -15,7 +15,7 @@ export class DesafiosService {
         @InjectModel('Desafios') private readonly desafioModel: Model<Desafios>,
         private readonly categoriaService: CategoriasService,
         private readonly jogadoresService: JogadoresService,
-        private readonly cacheService:CacheService
+        private readonly cacheService: CacheService
     ) {
     }
 
@@ -34,12 +34,12 @@ export class DesafiosService {
         this.logger.log(`solicitanteEhJogadorDaPartida: ${JSON.stringify(solicitantePartida)}`);
 
         if (solicitantePartida.length == 0) throw new BadRequestException(`O solicitante deve ser um jogador da partida!`);
-        
+
 
         const categoriaDoJogador = await this.categoriaService.buscarCategoriaJogador(desafio.solicitante);
 
         if (!categoriaDoJogador) throw new BadRequestException(`O solicitante precisa estar registrado em uma categoria!`);
-        
+
 
         const dataDesafio = new Date(desafio.dataHoraDesafio);
         const dataHoraSolicitacao = new Date();
@@ -49,22 +49,24 @@ export class DesafiosService {
         desafioCriado.dataHoraSolicitacao = dataHoraSolicitacao;
 
         if (dataDesafio < dataHoraSolicitacao) throw new BadRequestException("A data do desafio tem que ser maior que a data de solicitação");
-        
+
         desafioCriado.status = StatusDesafio.PENDENTE;
         this.logger.log(`desafioCriado: ${JSON.stringify(desafioCriado)}`);
         return await desafioCriado.save();
     }
 
-    async buscarTodosDesafios():Promise<Desafios[]>{
-        return await this.desafioModel.find().exec()
+    async buscarTodosDesafios(): Promise<Desafios[]> {
+        return await this.desafioModel.find().populate('jogadores').exec()
     }
 
-    async buscarDesafiosPorSolicitante(solicitante:string):Promise<Desafios[]>{
-        return this.cacheService.getCache<Desafios[]>(`desafio_${solicitante}`, 
-            () =>
-            this.desafioModel.find({
-                solicitante:solicitante
-            }))
+    async buscarDesafiosPorSolicitante(solicitante: string): Promise<Desafios[]> {
+        return this.cacheService.getCache<Desafios[]>(`desafio_${solicitante}`,
+            async () =>
+                await this.desafioModel.find({
+                    solicitante: solicitante
+                })
+                    .populate('jogadores').exec())
+
     }
-    
+
 }

@@ -9,10 +9,10 @@ export interface Desafios extends Document{
     solicitante:string;
     categoria:string;
     jogadores: Array<Jogador>;
-    partida:Partida
+    partida:Partidas
 }
 
-export interface Partida extends Document{
+export interface Partidas extends Document{
     categoria:string,
     jogadores:Array<Jogador>;
     def:Jogador;

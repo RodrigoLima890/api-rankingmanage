@@ -1,11 +1,11 @@
 import mongoose from "mongoose";
 
-export const PartidaSchame = new mongoose.Schema(
+export const PartidaSchema = new mongoose.Schema(
     {
         categoria: {type:String},
         jogadores :[{
             type:mongoose.Schema.ObjectId,
-            ref: 'jogadores'
+            ref: 'Jogadores'
         }],
         def:{type:mongoose.Schema.ObjectId},
         resultado: [
@@ -13,5 +13,5 @@ export const PartidaSchame = new mongoose.Schema(
             set:{type:String}
         }
     ]
-    },{timestamps: true, collection: 'partidas'}
+    },{timestamps: true, collection: 'Partidas'}
 )

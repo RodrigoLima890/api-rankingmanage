@@ -11,16 +11,16 @@ export const DesafioSchema = new mongoose.Schema(
         [
             {
                 type:mongoose.Schema.ObjectId,
-                ref:'jogadores'
+                ref:'Jogadores'
             }
         ],
-        partida:
+        partidas:
         [
             {
                 type:mongoose.Schema.ObjectId,
-                ref:'partidas'
+                ref:'Partidas'
             }
         ]
 
-    },{timestamps:true, collection:'desafios'}
+    },{timestamps:true, collection:'Desafios'}
 )
