@@ -71,7 +71,7 @@ export class DesafiosService {
 
     }
 
-    async atribuirDesafioPartida(idDesafio: string, atribuirDesafioPartida:AtribuirDesafioPartidaDto) {
+    async atribuirDesafioPartida(idDesafio: string, atribuirDesafioPartida: AtribuirDesafioPartidaDto) {
         const desafioEncontrado = await this.desafioModel.findById(idDesafio).exec();
         if (!desafioEncontrado) throw new NotFoundException("Desafio com id " + idDesafio + " não encontrado")
 
@@ -82,7 +82,7 @@ export class DesafiosService {
         this.logger.log(`desafioEncontrado: ${desafioEncontrado}`)
         this.logger.log(`jogadorFilter: ${jogadorFilter}`)
 
-        if(jogadorFilter.length == 0) throw new BadRequestException("Jogador vencedor não faz parte do desafio")
+        if (jogadorFilter.length == 0) throw new BadRequestException("Jogador vencedor não faz parte do desafio")
 
         const partidaCriada = new this.partidaModel(atribuirDesafioPartida)
 
@@ -96,17 +96,29 @@ export class DesafiosService {
         desafioEncontrado.partida = resultado;
 
         try {
-        await this.desafioModel.findOneAndUpdate({idDesafio},{$set: desafioEncontrado}).exec() 
+            await this.desafioModel.findOneAndUpdate({ idDesafio }, { $set: desafioEncontrado }).exec()
         } catch (error) {
             /*
             Se a atualização do desafio falhar excluímos a partida 
             gravada anteriormente
             */
-           await this.partidaModel.deleteOne({idDesafio: resultado._id}).exec();
-           throw new InternalServerErrorException()
+            await this.partidaModel.deleteOne({ idDesafio: resultado._id }).exec();
+            throw new InternalServerErrorException()
         }
-
-
     }
 
+    async deletarDesafio(desafioId:string){
+        const desafioExiste = await this.desafioModel.findById(desafioId);
+        if(!desafioExiste) throw new NotFoundException("Desafio "+desafioId+" não encontrado");
+
+        const deleteObj = await this.desafioModel.deleteOne({
+            _id:desafioId
+        });
+
+        if(deleteObj.deletedCount < 1) throw new BadRequestException("Erro ao deletar o desafio!");
+        
+        return {
+            "message":"Desafio excluido com sucesso"
+        }
+    }
 }
