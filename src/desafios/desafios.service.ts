@@ -111,14 +111,8 @@ export class DesafiosService {
         const desafioExiste = await this.desafioModel.findById(desafioId);
         if(!desafioExiste) throw new NotFoundException("Desafio "+desafioId+" não encontrado");
 
-        const deleteObj = await this.desafioModel.deleteOne({
-            _id:desafioId
-        });
+        desafioExiste.status = StatusDesafio.CANCELADO;
 
-        if(deleteObj.deletedCount < 1) throw new BadRequestException("Erro ao deletar o desafio!");
-        
-        return {
-            "message":"Desafio excluido com sucesso"
-        }
+        await this.desafioModel.findOneAndUpdate({desafioId},{$set: desafioExiste}).exec() 
     }
 }
