@@ -33,7 +33,7 @@ export class DesafiosService {
         });
 
         const solicitantePartida = desafio.jogadores.filter((jogador) => jogador._id == desafio.solicitante);
-        this.logger.log(`solicitanteEhJogadorDaPartida: ${JSON.stringify(solicitantePartida)}`);
+        this.logger.log(`solicitanteJogadorDaPartida: ${JSON.stringify(solicitantePartida)}`);
 
         if (solicitantePartida.length == 0) throw new BadRequestException(`O solicitante deve ser um jogador da partida!`);
 
