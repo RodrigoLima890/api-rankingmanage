@@ -6,7 +6,7 @@ export const DesafioSchema = new mongoose.Schema(
         status: {type:String},
         dataHoraSolicitacao:{type:Date},
         dataHoraResposta:{type:Date},
-        solicitante:{type:String},
+        solicitante:{type: mongoose.Schema.Types.ObjectId, ref: "Jogadores"},
         jogadores:
         [
             {

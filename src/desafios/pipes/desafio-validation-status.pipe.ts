@@ -8,10 +8,10 @@ export class DesafioValidationStatusPipe implements PipeTransform{
         StatusDesafio.RECUSADO,
         StatusDesafio.CANCELADO
     ]
-    transform(value: Desafios) {
+    transform(value: any) {
         const status = value.status.toUpperCase();
 
-        if(this.statusValido(status)) throw new BadRequestException(`${status} não é um status válido`);
+        if(!this.statusValido(status)) throw new BadRequestException(`${status} não é um status válido`);
         return value;
     }
 

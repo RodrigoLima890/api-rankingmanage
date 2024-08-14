@@ -8,6 +8,7 @@ import { JogadoresService } from 'src/jogadores/jogadores.service';
 import { StatusDesafio } from './enums/status-desafio.enum';
 import { CacheService } from 'src/cache/cache.service';
 import { AtribuirDesafioPartidaDto } from './dtos/atribuir-desafio-partida.dto';
+import { AtualizarDesafioDto } from './dtos/atualizar-desafio.dto';
 
 @Injectable()
 export class DesafiosService {
@@ -58,16 +59,23 @@ export class DesafiosService {
     }
 
     async buscarTodosDesafios(): Promise<Desafios[]> {
-        return await this.desafioModel.find().populate('jogadores').exec()
+        return await this.desafioModel.find().populate('solicitante').populate('jogadores').exec()
     }
 
-    async buscarDesafiosPorSolicitante(solicitante: string): Promise<Desafios[]> {
+    async buscarDesafiosPorSolicitante(solicitante: any): Promise<Desafios[]> {
+        
+        const jogadorExiste = await this.jogadoresService.buscarJogadorPeloId(solicitante);
+
+        if(!jogadorExiste) throw new NotFoundException(`Jogador com o id ${solicitante} não encontrado`)
+        
         return this.cacheService.getCache<Desafios[]>(`desafio_${solicitante}`,
             async () =>
-                await this.desafioModel.find({
-                    solicitante: solicitante
-                })
-                    .populate('jogadores').exec())
+                await this.desafioModel.find()
+            .where('jogadores')
+            .in(solicitante)
+            .populate('solicitante')
+            .populate('jogadores')
+            .exec())
 
     }
 
@@ -104,6 +112,27 @@ export class DesafiosService {
             */
             await this.partidaModel.deleteOne({ idDesafio: resultado._id }).exec();
             throw new InternalServerErrorException()
+        }
+    }
+
+    async atualizarDesafio(idDesafio:string, atualizarDesafioDto:AtualizarDesafioDto):Promise<Object>
+    {
+        const desafioEncontrado = await this.desafioModel.findById(idDesafio).exec();
+
+        console.log(desafioEncontrado);
+        if(!desafioEncontrado) throw new NotFoundException("Desafio não encontrado");
+
+        if(atualizarDesafioDto.status){
+            desafioEncontrado.dataHoraResposta = new Date()
+        }
+        desafioEncontrado.status = atualizarDesafioDto.status;
+        desafioEncontrado.dataHoraDesafio = atualizarDesafioDto.dataHoraDesafio;
+        const objectUpdate = await this.desafioModel.updateOne({_id:idDesafio}, desafioEncontrado);
+
+        if(objectUpdate.modifiedCount < 1) throw new BadRequestException('Erro ao editar as informações do desafio');
+
+        return {
+            'message':'Desafio alterado com sucesso'
         }
     }
 
