@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put, UsePipes } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, UsePipes } from '@nestjs/common';
 import { CriaDesafioDto } from './dtos/cria-desafio.dto';
 import { ValidacaoParamPipe } from 'src/common/pipes/validacao-param.pipe';
 import { DesafiosService } from './desafios.service';
@@ -42,7 +42,13 @@ export class DesafiosController {
     async atribuirDesafioPartida(
         @Body(ValidacaoParamPipe) atribuirDesafioPartidaDto:AtribuirDesafioPartidaDto,
         @Param('desafio') idDesafio:string
-    ):Promise<void>{
+    ):Promise<Desafios>{
         return this.desafiosService.atribuirDesafioPartida(idDesafio,atribuirDesafioPartidaDto)
+    }
+
+    // metodo para cencelar um desafio
+    @Delete('/:desafio')
+    async deletarDesafio(@Param('desafio') desafio:string):Promise<Object>{
+        return await this.desafiosService.deletarDesafio(desafio);
     }
 }

@@ -38,7 +38,6 @@ export class DesafiosService {
 
         if (solicitantePartida.length == 0) throw new BadRequestException(`O solicitante deve ser um jogador da partida!`);
 
-
         const categoriaDoJogador = await this.categoriaService.buscarCategoriaJogador(desafio.solicitante);
 
         if (!categoriaDoJogador) throw new BadRequestException(`O solicitante precisa estar registrado em uma categoria!`);
@@ -79,14 +78,13 @@ export class DesafiosService {
 
     }
 
-    async atribuirDesafioPartida(idDesafio: string, atribuirDesafioPartida: AtribuirDesafioPartidaDto) {
+    async atribuirDesafioPartida(idDesafio: string, atribuirDesafioPartida: AtribuirDesafioPartidaDto):Promise<Desafios> {
         const desafioEncontrado = await this.desafioModel.findById(idDesafio).exec();
         if (!desafioEncontrado) throw new NotFoundException("Desafio com id " + idDesafio + " não encontrado")
 
         const jogadorFilter = desafioEncontrado.jogadores.filter((jogador) => {
             return jogador._id == atribuirDesafioPartida.def
         },[])
-        console.log(jogadorFilter);
 
         this.logger.log(`desafioEncontrado: ${desafioEncontrado}`)
         this.logger.log(`jogadorFilter: ${jogadorFilter}`)
@@ -103,11 +101,10 @@ export class DesafiosService {
         desafioEncontrado.status = StatusDesafio.REALIZADO;
 
         desafioEncontrado.partida = resultado.id;
-        console.log(resultado.id+" resultado");
-        console.log(desafioEncontrado+ "Desafio encontrado");
+      
         try {
             const desafio = await this.desafioModel.findOneAndUpdate({ _id:idDesafio }, { $set: desafioEncontrado }).exec()
-            console.log(desafio+" Desafio");
+            return desafio
         } catch (error) {
             /*
             Se a atualização do desafio falhar excluímos a partida 
@@ -139,12 +136,18 @@ export class DesafiosService {
         }
     }
 
-    async deletarDesafio(desafioId:string){
+    async deletarDesafio(desafioId:string):Promise<Object>{
         const desafioExiste = await this.desafioModel.findById(desafioId);
         if(!desafioExiste) throw new NotFoundException("Desafio "+desafioId+" não encontrado");
 
         desafioExiste.status = StatusDesafio.CANCELADO;
 
-        await this.desafioModel.findOneAndUpdate({desafioId},{$set: desafioExiste}).exec() 
+        const desafioUpdObj = await this.desafioModel.updateOne({_id:desafioId},desafioExiste).exec()
+
+        if(desafioUpdObj.modifiedCount < 1) throw new BadRequestException("Erro ao cancelar esse desafio")
+
+        return {
+            "message":"Desafio cancelado com sucesso"
+        }
     }
 }
