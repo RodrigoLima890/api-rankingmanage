@@ -59,7 +59,7 @@ export class DesafiosService {
     }
 
     async buscarTodosDesafios(): Promise<Desafios[]> {
-        return await this.desafioModel.find().populate('solicitante').populate('jogadores').exec()
+        return await this.desafioModel.find().populate('partida').populate('solicitante').populate('jogadores').exec()
     }
 
     async buscarDesafiosPorSolicitante(solicitante: any): Promise<Desafios[]> {
@@ -84,8 +84,9 @@ export class DesafiosService {
         if (!desafioEncontrado) throw new NotFoundException("Desafio com id " + idDesafio + " não encontrado")
 
         const jogadorFilter = desafioEncontrado.jogadores.filter((jogador) => {
-            jogador._id == atribuirDesafioPartida.def
-        })
+            return jogador._id == atribuirDesafioPartida.def
+        },[])
+        console.log(jogadorFilter);
 
         this.logger.log(`desafioEncontrado: ${desafioEncontrado}`)
         this.logger.log(`jogadorFilter: ${jogadorFilter}`)
@@ -101,16 +102,18 @@ export class DesafiosService {
 
         desafioEncontrado.status = StatusDesafio.REALIZADO;
 
-        desafioEncontrado.partida = resultado;
-
+        desafioEncontrado.partida = resultado.id;
+        console.log(resultado.id+" resultado");
+        console.log(desafioEncontrado+ "Desafio encontrado");
         try {
-            await this.desafioModel.findOneAndUpdate({ idDesafio }, { $set: desafioEncontrado }).exec()
+            const desafio = await this.desafioModel.findOneAndUpdate({ _id:idDesafio }, { $set: desafioEncontrado }).exec()
+            console.log(desafio+" Desafio");
         } catch (error) {
             /*
             Se a atualização do desafio falhar excluímos a partida 
             gravada anteriormente
             */
-            await this.partidaModel.deleteOne({ idDesafio: resultado._id }).exec();
+            await this.partidaModel.deleteOne({ _id: resultado._id }).exec();
             throw new InternalServerErrorException()
         }
     }
